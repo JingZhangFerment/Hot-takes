@@ -1,10 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const app = express();
 
 //Connecter l'API au cluster MongoDB
-mongoose.connect("mongodb+srv://zhang-ferment:HOTTAKES2022@cluster0.8muze.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+mongoose.connect(process.env.DB_URL,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
