@@ -5,6 +5,9 @@ dotenv.config();
 
 const app = express();
 
+const mySauce = require("./models/sauce");
+const sauce = require("./models/sauce");
+
 //Connecter l'API au cluster MongoDB
 mongoose.connect(process.env.DB_URL,
   { useNewUrlParser: true,
@@ -27,10 +30,40 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post("/api/sauces", (req, res, next) => {});
-
-app.get((req, res, next) => {
-  res.json({ message: "votre requête a bien été enregistré!" });
+app.post("/api/sauces", (req, res, next) => {
+  delete req.body._id;
+  const mySauce = new sauce ({
+    ...req.body
+  })
+  mySauce.save()
+  .then(() => res.status(201).json({message: "sauce enregistrée!"}))
+  .catch(error => res.status(400).json({error}));
 });
+
+//Renvoie un tableau de toutes les sauces de la base de données.
+app.get("/api/sauces", (req, res, next) => {
+  mySauce.find()
+  .then(sauces => res.status(200).json(sauces))
+  .catch(error => res.status(400).json({error}));
+  
+});
+
+app.get ("/api/sauces/:id", (req, res, next) => {
+  mySauce.findOne({ _id: req.params.id})
+  .then(sauce => res.status(200).json(sauce))
+  .catch(error => res.status(404).json({error}));
+})
+
+app.put ("/api/sauces/:id", (req, res, next) => {
+  mySauce.updateOne({_id: req.params.id}, {...req.body, _id: req.params.id})
+  .then((mySauce)=> res.status(200).json({message: "Sauce modifiée !"}))
+  .catch(error => res.status(400).json({error}));
+})
+
+app.delete ("/api/sauces/:id", (req, res, next) => {
+  mySauce.deleteOne ({_id: req.params.id})
+  .then ((mySauce)=> res.status(200).json({message: "Sauce supprimée !"}))
+  .catch(error => res.status(400).json({error}));
+})
 
 module.exports = app;
