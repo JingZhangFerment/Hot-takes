@@ -10,8 +10,10 @@
   "author": "Jing ZHANG-FERMENT",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
-    "mongoose": "^6.2.3"
+    "mongoose": "^6.2.3",
+    "mongoose-unique-validator": "^3.0.0"
   }
 }

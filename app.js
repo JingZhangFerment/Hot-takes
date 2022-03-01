@@ -6,6 +6,7 @@ dotenv.config();
 const app = express();
 
 const sauceRoutes = require("./routes/sauce");
+const userRoutes = require("./routes/user");
 
 //Connecter l'API au cluster MongoDB
 mongoose.connect(process.env.DB_URL,
@@ -30,5 +31,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/sauces", sauceRoutes);
+app.use("/api/auth", userRoutes);
 
 module.exports = app;
