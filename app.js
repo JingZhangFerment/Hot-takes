@@ -4,11 +4,12 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
+const cors = require("cors");
 
 const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
 
-//Connecter l'API au cluster MongoDB
+//Connecter l'API au MongoDB
 mongoose.connect(process.env.DB_URL,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
@@ -16,6 +17,9 @@ mongoose.connect(process.env.DB_URL,
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 app.use(express.json());
+
+//autoriser toutes les demandes CORS
+app.use(cors());
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

@@ -1,9 +1,12 @@
+const { JsonWebTokenError } = require("jsonwebtoken");
 const mySauce = require("../models/sauce");
 
 exports.createSauce = (req, res, next) => {
-  delete req.body._id;
+  const sauceObject = JSON.parse(req.body.sauce);
+  delete sauceObject._id;
   const mySauce = new sauce({
-    ...req.body,
+    ...sauceObject,
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
   });
   mySauce
     .save()
@@ -22,6 +25,7 @@ exports.deleteSauce = (req, res, next) => {
   mySauce
     .findOne({ _id: req.params.id })
     .then((mySauce) => {
+      
       if (!mySauce) {
         return res
           .status(404)
@@ -33,6 +37,7 @@ exports.deleteSauce = (req, res, next) => {
           .status(403)
           .json({ error: new Error("Requête non autorisée !") });
       }
+
       mySauce
         .deleteOne({ _id: req.params.id })
         .then((mySauce) =>
