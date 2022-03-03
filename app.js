@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config();
+const path = require("path");
 
 const app = express();
 const cors = require("cors");
@@ -33,6 +34,8 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);

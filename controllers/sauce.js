@@ -1,46 +1,52 @@
-const { JsonWebTokenError } = require("jsonwebtoken");
-const mySauce = require("../models/sauce");
+const jwt = require("jsonwebtoken");
+const Sauce = require("../models/sauce");
 
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
   delete sauceObject._id;
-  const mySauce = new sauce({
+  const sauce = new Sauce({
     ...sauceObject,
     imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
   });
-  mySauce
+  sauce
     .save()
-    .then(() => res.status(201).json({ message: "sauce enregistrée!" }))
+    .then((sauce) =>res.status(201).json({ message: "Sauce enregistrée!" }))
     .catch((error) => res.status(400).json({ error }));
 };
 
 exports.modifySauce = (req, res, next) => {
-  mySauce
-    .updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
-    .then((mySauce) => res.status(200).json({ message: "Sauce modifiée !" }))
+  const sauceObject = req.file ?
+  {
+    ...JSON.parse(req.body.sauce),
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+  }: { ...req.body};
+  
+  Sauce
+    .updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+    .then((Sauce) => res.status(200).json({ message: "Sauce modifiée !" }))
     .catch((error) => res.status(400).json({ error }));
 };
 
 exports.deleteSauce = (req, res, next) => {
-  mySauce
+  Sauce
     .findOne({ _id: req.params.id })
-    .then((mySauce) => {
+    .then((Sauce) => {
       
-      if (!mySauce) {
+      if (!Sauce) {
         return res
           .status(404)
           .json({ error: new Error("Sauce non trouvée !") });
       }
 
-      if (mySauce.userId && mySauce.userId !== req.auth.userId) {
+      if (Sauce.userId && Sauce.userId !== req.auth.userId) {
         return res
           .status(403)
           .json({ error: new Error("Requête non autorisée !") });
       }
 
-      mySauce
+      Sauce
         .deleteOne({ _id: req.params.id })
-        .then((mySauce) =>
+        .then((Sauce) =>
           res.status(200).json({ message: "Sauce supprimée !" })
         )
         .catch((error) => res.status(400).json({ error }));
@@ -49,14 +55,14 @@ exports.deleteSauce = (req, res, next) => {
 };
 
 exports.getOneSauce = (req, res, next) => {
-  mySauce
+  Sauce
     .findOne({ _id: req.params.id })
     .then((sauce) => res.status(200).json(sauce))
     .catch((error) => res.status(404).json({ error }));
 };
 
 exports.getAllSauces = (req, res, next) => {
-  mySauce
+  Sauce
     .find()
     .then((sauces) => res.status(200).json(sauces))
     .catch((error) => res.status(400).json({ error }));
