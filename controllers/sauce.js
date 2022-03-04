@@ -11,6 +11,8 @@ exports.createSauce = (req, res, next) => {
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
+    likes: 0,
+    dislikes: 0
   });
   sauce
     .save()
@@ -51,7 +53,7 @@ exports.deleteSauce = (req, res, next) => {
           .json({ error: new Error("Requête non autorisée !") });
       }
 
-      const filename = sauce.imageUrl.split("/image/")[1];
+      const filename = sauce.imageUrl.split("/images/")[1];
 
       fs.unlink(`images/${filename}`, () => {
         Sauce.deleteOne({ _id: req.params.id })
