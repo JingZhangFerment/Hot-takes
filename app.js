@@ -2,10 +2,17 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config();
+//importer "helmet" pour protéger l'app de certaines des vulnérabilités du Web en configurant de manière appropriée des en-têtes HTTP.
+const helmet = require("helmet");
 const path = require("path");
 
 const app = express();
+
+//configurer le cors : autoriser uniquement les requêtes provenant de "http://127.0.0.1:8081/" 
 const cors = require("cors");
+const corsOptions = {
+  origin: "http://127.0.0.1:8081/"
+};
 
 const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
@@ -19,8 +26,7 @@ mongoose.connect(process.env.DB_URL,
 
 app.use(express.json());
 
-//autoriser toutes les demandes CORS
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -34,6 +40,8 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+app.use(helmet());
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 
