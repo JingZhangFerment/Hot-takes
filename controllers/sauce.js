@@ -79,4 +79,8 @@ exports.getAllSauces = (req, res, next) => {
     .catch((error) => res.status(400).json({ error }));
 };
 
+exports.likeSauce = (req, res, next) => {
+  
+}
+
 //fichiers controlleurs: méthodes attribuées aux routes

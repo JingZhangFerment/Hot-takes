@@ -1,6 +1,9 @@
-//importer le mongoose pour créer un schéma
+//Ce fichier contient le schéma des données sauces pour la base de données MongoDB
+
+//importer le package "mongoose" pour faciliter les interations avec MONGODB
 const mongoose = require ("mongoose");
 
+//---------SCHEMA DES DONNEES----------------
 const sauceSchema = mongoose.Schema ({
     userId : {type: String, required: true },
     name: {type: String, required: true, trim: true},
@@ -12,7 +15,9 @@ const sauceSchema = mongoose.Schema ({
     likes: {type: Number, required: true, default: 0},
     dislikes: {type: Number, required: true, default: 0},
     usersLiked : {type: [String], required: true, default: []}, 
+    // autre possibilité: usersLiked : {type: Array, required: true, default: []}, 
     usersDisliked :{type: [String], required: true, default: []} 
 });
 
+//transformer ce model avec en arguments ("nom du modèle", "nom du schéma") en un modèle utilisable
 module.exports = mongoose.model("Sauce", sauceSchema);
