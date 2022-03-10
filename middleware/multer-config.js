@@ -19,16 +19,14 @@ const storage = multer.diskStorage({
   filename: (req, file, callback) => {
     const name = file.originalname.split(" ").join("_");
     //si le type de fichier n'est pas dans les formats MIME_TYPES
-    if (!MIME_TYPES.includes(file.mimetype)) {
-      return callback(
-        new Error("Le format de l'image n'est pas valide !")
-      );
-    } else {
+    //if (!(file.mimetype in MIME_TYPES)) {
+      //return callback(new Error("Le format de l'image n'est pas valide !"))
+    //} else {
       const extension = MIME_TYPES[file.mimetype];
       //argument 1 du callback: "null" = pas d'erreur
       //argument 2 du callback: nom de fichier entier = name + timestamp Date.now() + extension
       callback(null, name + Date.now() + "." + extension);
-    }
+    //}
   },
 });
 

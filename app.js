@@ -12,12 +12,6 @@ const mongoose = require("mongoose"); //pour faciliter les interations avec MONG
 //pour sécuriser les en-tête http de l'application express
 const helmet = require("helmet");
 
-//pour autoriser uniquement les requêtes provenant de "http://127.0.0.1:8081/"
-const cors = require("cors");
-const corsOptions = {
-  origin: "http://127.0.0.1:8081/",
-};
-
 //nettoyer les données fournies par l'utilisateur pour empêcher l'injection d'opérateur MongoDB.
 const mongoSanitize = require("express-mongo-sanitize");
 
@@ -59,11 +53,8 @@ app.use((req, res, next) => {
   next();
 });
 
-//Sécuriser les en-têtes HTTP de notre app Express
-app.use(cors(corsOptions));
-
 //protèger l'appli de certaines vulnerabilités en configurant les en-têtes
-app.use(helmet());
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
 //supprimer les caractères "$" et "." dans les données fournies par l'utilisateur dans les endroits suivants:
 // - req.body

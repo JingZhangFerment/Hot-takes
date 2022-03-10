@@ -15,7 +15,7 @@ const router = express.Router(); // permet de créer du router
 
 //---------CREATION DES ROUTES --------------
 router.post ("/signup", email, password, userCtrl.signup); //créer un compte
-router.post ("/login", email, password, connexion, userCtrl.login); //se connecter sur un compte déjà créé
+router.post ("/login", connexion, userCtrl.login); //se connecter sur un compte déjà créé
 
 
 // ----------EXPORT------------------
