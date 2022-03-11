@@ -28,7 +28,7 @@ router.get("/:id", auth, sauceCtrl.getOneSauce);
 router.get("/", auth, sauceCtrl.getAllSauces); 
 
 //gérer les "likes" et "dislikes"
-//router.post("/:id/like", auth, sauceCtrl.likeASauce); 
+router.post("/:id/like", auth, sauceCtrl.likeASauce); 
 
 // ----------EXPORT------------------
 module.exports = router;  //exporter ce module "router" pour le réutiliser ailleurs
