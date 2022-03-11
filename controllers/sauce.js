@@ -8,7 +8,6 @@ const jwt = require("jsonwebtoken");
 const Sauce = require("../models/sauce");
 //importer le package "file system" qui permet de modifer le system des fichiers.
 const fs = require("fs");
-const sauce = require("../models/sauce");
 
 // -----MIDDLEWARE pour créer une sauce ------------
 exports.createSauce = (req, res, next) => {
@@ -116,11 +115,10 @@ exports.likeASauce = (req, res, next) => {
   //trouver la sauce dans la base des données
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
-
       //définir le status d'un utilisateur
       const userStatus = {
-        userLiked: sauce.userLiked,
-        userDisliked: sauce.userDisliked,
+        usersLiked: sauce.usersLiked,
+        usersDisliked: sauce.usersDisliked,
         likes: 0,
         dislikes: 0,
       };
@@ -128,40 +126,40 @@ exports.likeASauce = (req, res, next) => {
       // 3 cas possibles selon la valeur de "like"
       switch (req.body.like) {
         case 1: // si l'utilisateur aime la sauce
-        userStatus.userLiked.push(req.body.userId); //ajouter dans le tableau "userLiked"
+          userStatus.usersLiked.push(req.body.userId); //ajouter dans le tableau "userLiked"
           break;
 
         case -1: //si l'utilisateur n'aime pas la sauce
-          userStatus.userDisliked.push(req.body.userId); //ajouter dans le tableau "userDisliked"
+          userStatus.usersDisliked.push(req.body.userId); //ajouter dans le tableau "userDisliked"
           break;
 
         case 0: // l'utilisateur annule son like ou dislike
           // si l'utilisateur annule son like, retirer-le du tableau "userLiked"
-          if (req.body.userId in userStatus(userLiked)) {
-            let indexLiked = userStatus.userLiked.indexOf(userId);
-            userStatus.userLiked.splice(index, 1); //supprimer 1 élément à partir de l'index "index"
+          
+          if (userStatus.usersLiked.includes(req.body.userId)) {
+            let indexLiked = userStatus.usersLiked.indexOf(req.body.userId);
+            userStatus.usersLiked.splice(indexLiked, 1); //supprimer 1 élément à partir de l'index "index"
           } else {
             //si l'utilisateur annule son dislike, retirer-le du tableau "userDisliked"
-            let indexDisliked = userStatus.userDisliked.indexOf(userId);
-            userStatus.userDisliked.splice(index, 1);
+            let indexDisliked = userStatus.usersDisliked.indexOf(req.body.userId);
+            userStatus.usersDisliked.splice(indexDisliked, 1);
           }
           break;
-          
+
         default:
           throw error;
       }
 
       //calculer le nombre total de likes et dislikes
-      userStatus.likes = userStatus.userLiked.length;
-      userStatus.dislikes = userStatus.userDisliked.length;
+      userStatus.likes = userStatus.usersLiked.length;
+      userStatus.dislikes = userStatus.usersDisliked.length;
 
       //mettre à jour la sauce avec les nouveaux status
       Sauce.updateOne({ _id: req.params.id }, userStatus)
         .then((sauce) =>
-          res.status(200).json({ message: "La sauce a bien été notée!" }))
+          res.status(200).json({ message: "Sauce bien notée!" })
+        )
         .catch((error) => res.status(400).json({ error }));
     })
     .catch((error) => res.status(400).json({ error }));
 };
-
-
