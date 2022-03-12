@@ -31,39 +31,39 @@ exports.createSauce = (req, res, next) => {
 
 // -----MIDDLEWARE pour modifier une sauce ------------
 exports.modifySauce = (req, res, next) => {
+  //s'il y a une modification de fichier, supprimer-le d'abord.
   if (req.file) {
     Sauce.findOne({ _id: req.params.id })
       .then((sauce) => {
         const filename = sauce.imageUrl.split("/images/")[1];
-
-        fs.unlink(`images/${filename}`, () => {
-          const sauceObject = {
-            ...JSON.parse(req.body.sauce),
-            imageUrl: `${req.protocol}://${req.get("host")}/images/${
-              req.file.filename
-            }`,
-          };
+        fs.unlink(`images/${filename}`, (error) => {
+          if (error) {
+            return new Error(error);
+          }
         });
-
-        Sauce.updateOne(
-          { _id: req.params.id },
-          { ...sauceObject, _id: req.params.id }
-        )
-          .then((sauce) =>
-            res.status(200).json({ message: "Sauce modifiée !" })
-          )
-          .catch((error) => res.status(400).json({ error }));
       })
       .catch((error) => res.status(400).json({ error }));
-  } else {
-    const sauceObject = { ...req.body };
-    Sauce.updateOne(
-      { _id: req.params.id },
-      { ...sauceObject, _id: req.params.id }
-    )
-      .then((sauce) => res.status(200).json({ message: "Sauce modifiée !" }))
-      .catch((error) => res.status(400).json({ error }));
   }
+
+  //mise à jour la base des données lors de modification
+  //une condition pour deux cas: avec une modification de l'image ou sans
+  const sauceObject = req.file
+    ? {
+        ...JSON.parse(req.body.sauce),
+        imageUrl: `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`,
+      }
+    : { ...req.body };
+
+  //modifier le fichier
+  Sauce.updateOne(
+    //trouver la même sauce avec le nouvel objet
+    { _id: req.params.id },
+    { ...sauceObject, _id: req.params.id }
+  )
+    .then((sauce) => res.status(200).json({ message: "Sauce bien modifiée !" }))
+    .catch((error) => res.status(400).json(error));
 };
 
 // -----MIDDLEWARE pour supprimer une sauce ------------
@@ -135,13 +135,15 @@ exports.likeASauce = (req, res, next) => {
 
         case 0: // l'utilisateur annule son like ou dislike
           // si l'utilisateur annule son like, retirer-le du tableau "userLiked"
-          
-          if (userStatus.usersLiked.includes(req.body.userId)) {
+
+          if (req.body.userId in userStatus.usersLiked) {
             let indexLiked = userStatus.usersLiked.indexOf(req.body.userId);
             userStatus.usersLiked.splice(indexLiked, 1); //supprimer 1 élément à partir de l'index "index"
           } else {
             //si l'utilisateur annule son dislike, retirer-le du tableau "userDisliked"
-            let indexDisliked = userStatus.usersDisliked.indexOf(req.body.userId);
+            let indexDisliked = userStatus.usersDisliked.indexOf(
+              req.body.userId
+            );
             userStatus.usersDisliked.splice(indexDisliked, 1);
           }
           break;
@@ -156,9 +158,7 @@ exports.likeASauce = (req, res, next) => {
 
       //mettre à jour la sauce avec les nouveaux status
       Sauce.updateOne({ _id: req.params.id }, userStatus)
-        .then((sauce) =>
-          res.status(200).json({ message: "Sauce bien notée!" })
-        )
+        .then((sauce) => res.status(200).json({ message: "Sauce bien notée!" }))
         .catch((error) => res.status(400).json({ error }));
     })
     .catch((error) => res.status(400).json({ error }));

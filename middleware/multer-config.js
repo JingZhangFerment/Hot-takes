@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
 
   //indiquer à multer quel est le nom à utiliser pour ces fichiers
   filename: (req, file, callback) => {
+    
     const name = file.originalname.split(" ").join("_");
     //si le type de fichier n'est pas dans les formats MIME_TYPES
     //if (!(file.mimetype in MIME_TYPES)) {
@@ -30,11 +31,20 @@ const storage = multer.diskStorage({
   },
 });
 
+const fileFilter = (req, file, callback) =>{
+  // ne pas accepter les mimetype qui ne sont pas des images.
+  if (!(file.mimetype in MIME_TYPES)) {
+    return callback(new Error("Le format de l'image n'est autorisé !"))
+  }
+  callback(null, true)
+}
+
 //exporter "multer" en appelant le module storage
 //.single signifie que c'est un fichier unique et non un groupe de fichiers
 // "image" pour indiquer à multer qu'il s'agit d'un fichier image uniquement
 module.exports = multer({
-  storage: storage,
+  storage,
+  fileFilter,
   //spécifier les limites peut aider à protéger le site contre les attaques par déni de service (DoS).
   limits: { fileSize: 500000 },
 }).single("image");

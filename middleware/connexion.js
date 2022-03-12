@@ -4,7 +4,7 @@ const limit = require ("express-rate-limit");
 //configuration du middleware pour limiter les tentatives de connexion échoués
 const connexionLimit = limit({
     windowMs: 15 * 60 * 1000, // 15 minutes: en ms
-	max: 3, // limiter chaque ID à 3 tentatives
+	max: 5, // limiter chaque ID à 5 tentatives
     message: "Votre compte est bloqué pendant quelques minutes suite aux tentatives de connexion échoués."
 });
 
