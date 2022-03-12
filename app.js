@@ -26,7 +26,7 @@ const userRoutes = require("./routes/user");
 
 //--------CONNEXTION l'API A LA BASE DES DONNEES MONGODB -------------
 mongoose
-  .connect(process.env.DB_URL, {
+  .connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

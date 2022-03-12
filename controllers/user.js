@@ -22,6 +22,7 @@ exports.signup = (req, res, next) => {
         email: req.body.email,
         password: hash,
       });
+
       sauceUser
         .save()
         .then((sauceUser) =>
