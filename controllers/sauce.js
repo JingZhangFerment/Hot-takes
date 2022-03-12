@@ -133,7 +133,7 @@ exports.likeASauce = (req, res, next) => {
           userStatus.usersDisliked.push(req.body.userId); //ajouter dans le tableau "userDisliked"
           break;
 
-        case 0: // l'utilisateur annule son like ou dislike
+        case 0: // l'utilisateur annule son like ou dislike ou position neutre
           // si l'utilisateur annule son like, retirer-le du tableau "userLiked"
 
           if (req.body.userId in userStatus.usersLiked) {
