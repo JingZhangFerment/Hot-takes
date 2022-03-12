@@ -10,12 +10,12 @@ Node, Express, MongoDB (base des données)
 
 Avant de lancer ce projet, vous devrez ajouter les variables d'environnement suivantes dans un fichier .env
 
-PORT
-DB_USER
-DB_PASSWORD
-DB_HOST
-DB_NAME
-SECRET_TOKEN
+- PORT
+- DB_USER
+- DB_PASSWORD
+- DB_HOST
+- DB_NAME
+- SECRET_TOKEN
 
 ## Installation du backend
 
