@@ -3,12 +3,12 @@
 //---------IMPORTS--------------
 
 const express = require("express"); //pour créer les applis web avec node
+const router = express.Router(); // permet de créer des routes séparées pour chaque route principale
+
 const sauceCtrl = require("../controllers/sauce"); //import du controlleur "sauce"
 const auth = require("../middleware/auth"); //import du middleware d'authentification
 const multer = require("../middleware/multer-config"); //import du middleware "multer"
 
-
-const router = express.Router(); // permet de créer du router
 
 //---------CREATION DES ROUTES (CRUD: create/read/update/delete) --------------
 

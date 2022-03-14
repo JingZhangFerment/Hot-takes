@@ -8,18 +8,18 @@ const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
   try {
-    // Récupération du token dans le header authorization de "En-tête de requête"
+    // Récupérer le token dans le header authorization de "En-tête de requête"
     const token = req.headers.authorization.split(" ")[1];
     
-    // Décodage du token 
+    // Décoder le token 
     const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
     
-    // Récupération du userId encodé dans le token
+    // Récupérer du userId encodé dans le token
     const userId = decodedToken.userId;
     //ajout d'un attribut à l'objet "request" le rend accessible à tous les middlewares
     req.auth = { userId: userId };
 
-    // Comparaison du userId de la requête avec celui du token
+    // Comparer l'userId de la requête avec celui du token
     if (req.body.userId && !req.body.userId == userId) {
       throw "Identifiant non valide!";
     } else {

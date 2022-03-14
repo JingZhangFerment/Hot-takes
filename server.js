@@ -1,9 +1,9 @@
 //-------------IMPORTS-----------------
 
-//import du package 'http'
+//import du package 'http' qui permet de répondre les requêtes https
 const http = require("http");
 
-//import de l'application express
+//import de l'app express
 const app = require("./app");
 
 //import "dotenv": charger les variables d'environnement stockées dans le fichier .env
@@ -52,7 +52,7 @@ const errorHandler = (error) => {
   }
 };
 
-//créer un serveur avec Node
+//méthode "createServer" permet de créer le serveur Node "app"
 const server = http.createServer(app);
 
 //--------------CONNEXION AU PORT---------------
@@ -63,5 +63,8 @@ server.on("listening", () => {
   console.log("listening on" + bind);
 });
 
-//écoute du port
+//un écouteur d'évènements est enregistré sur le port
 server.listen(port);
+
+//Ajouter la normalisation de port, la gestion d'erreur et du logging basique au serveur Node 
+//le rend plus constant et plus facile à déboguer.

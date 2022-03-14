@@ -26,7 +26,7 @@ exports.signup = (req, res, next) => {
       sauceUser
         .save()
         .then((sauceUser) =>
-          res.status(201).json({ message: "Utilisateur créé !" })
+          res.status(201).json({ message: "Utilisateur créé et sauvegardé !" })
         )
         .catch((error) => res.status(400).json({ error }));
     })
@@ -52,7 +52,7 @@ exports.login = (req, res, next) => {
           }
           res.status(200).json({
             userId: sauceUser._id,
-            //pour encoder le nouveau token qui contient l'ID de l'utilisateur en tant que payload
+            //sign() : encoder le nouveau token qui contient l'ID de l'utilisateur en tant que payload
             token: jwt.sign(
               { userId: sauceUser._id },
               process.env.SECRET_TOKEN,

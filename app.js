@@ -1,13 +1,13 @@
 //Ce fichier contient la logique globale de notre application.
 
-//--------------------IMPORTS--------------------
-
 //pour charger les variables d'environnement stockées dans le fichier .env et protéger les informations de connexion
 const dotenv = require("dotenv");
 dotenv.config();
 
 const express = require("express"); //pour créer les applis web avec node
-const mongoose = require("mongoose"); //pour faciliter les interations avec MONGODB
+
+//faciliter les interations entre l'application Express et la base de données MongoDB.
+const mongoose = require("mongoose"); 
 
 //pour sécuriser les en-tête http de l'application express
 const helmet = require("helmet");
@@ -36,16 +36,18 @@ mongoose
 //Faire appel au module "Express" avec sa fonction
 const app = express();
 
-//Gestion des requêtes 'POST' : qui permet d'accéder aux corps de la requête
-app.use(express.json()); // Intercepter toutes les requêtes qui ont un content-type json.
+//Gérer les requêtes 'POST' venant du frontend : besoin d'extraire le corps JSON des requêtes
+//Express prend les requêtes qui ont comme Content-Type application/json et met à disposition leur body directement sur l'objet req
+app.use(express.json()); 
 
 //Pour permettre aux deux ports (front et end) de communiquer entre eux
+//Il ne prend pas l'adresse en premier argument, car cela s'applique à toutes les routes
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*"); //permet d'accéder l'API depuis n'importe quelle origine ('*')
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-  ); //autorisation d'utiliser certains headers sur l'objet requête
+  ); //ajouter les headers mentionnés aux requêtes envoyées vers notre API
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, PATCH, OPINIONS "
@@ -72,5 +74,5 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);
 
-//Export ce module "app" pour le réutiliser ailleurs
+//Export ce module "app" pour y accéder depuis les autres fichiers
 module.exports = app;

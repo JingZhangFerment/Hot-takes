@@ -3,7 +3,7 @@
 //importer le package "mongoose" pour faciliter les interations avec MONGODB
 const mongoose = require ("mongoose");
 
-//---------SCHEMA DES DONNEES----------------
+//---------CREATION SCHEMA DES DONNEES----------------
 const sauceSchema = mongoose.Schema ({
     userId : {type: String, required: true },
     name: {type: String, required: true, trim: true},
@@ -17,6 +17,7 @@ const sauceSchema = mongoose.Schema ({
     usersLiked : {type: [String], required: true, default: []}, 
     // autre possibilité: usersLiked : {type: Array, required: true, default: []}, 
     usersDisliked :{type: [String], required: true, default: []} 
+    // Pas besoin de mettre un champ pour l'Id puisqu'il est automatiquement généré par Mongoose
 });
 
 //transformer ce model avec en arguments ("nom du modèle", "nom du schéma") en un modèle utilisable

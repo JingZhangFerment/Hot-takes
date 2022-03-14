@@ -35,6 +35,18 @@ exports.modifySauce = (req, res, next) => {
   if (req.file) {
     Sauce.findOne({ _id: req.params.id })
       .then((sauce) => {
+        if (!sauce) {
+          return res
+            .status(404)
+            .json({ error: new Error("Sauce non trouvée !") });
+        }
+
+        if (sauce.userId && sauce.userId !== req.auth.userId) {
+          return res
+            .status(403)
+            .json({ error: new Error("Requête non autorisée !") });
+        }
+
         const filename = sauce.imageUrl.split("/images/")[1];
         fs.unlink(`images/${filename}`, (error) => {
           if (error) {
@@ -105,6 +117,7 @@ exports.getOneSauce = (req, res, next) => {
 
 // -----MIDDLEWARE pour voir toutes les sources ------------
 exports.getAllSauces = (req, res, next) => {
+  //méthode find() permet de renvoyer un tableau contenant tous les sauce dans la base de données
   Sauce.find()
     .then((sauces) => res.status(200).json(sauces))
     .catch((error) => res.status(400).json({ error }));
@@ -125,12 +138,23 @@ exports.likeASauce = (req, res, next) => {
 
       // 3 cas possibles selon la valeur de "like"
       switch (req.body.like) {
-        case 1: // si l'utilisateur aime la sauce
-          userStatus.usersLiked.push(req.body.userId); //ajouter dans le tableau "userLiked"
+        case 1: // si l'utilisateur aime la sauce et qu'il n'a pas encore liké
+          if (
+            !(req.body.userId in userStatus.usersLiked) &&
+            req.body.like === 1
+          ) {
+            
+            userStatus.usersLiked.push(req.body.userId);
+          } //ajouter dans le tableau "userLiked"
           break;
 
-        case -1: //si l'utilisateur n'aime pas la sauce
-          userStatus.usersDisliked.push(req.body.userId); //ajouter dans le tableau "userDisliked"
+        case -1: //si l'utilisateur n'aime pas la sauce et qu'il n'a pas encore disliké
+          if (
+            !(req.body.userId in userStatus.usersDisliked) &&
+            req.body.like === -1
+          ) {
+            userStatus.usersDisliked.push(req.body.userId);
+          } //ajouter dans le tableau "userDisliked"
           break;
 
         case 0: // l'utilisateur annule son like ou dislike ou position neutre
@@ -157,7 +181,7 @@ exports.likeASauce = (req, res, next) => {
       userStatus.dislikes = userStatus.usersDisliked.length;
 
       //mettre à jour la sauce avec les nouveaux status
-      Sauce.updateOne({ _id: req.params.id }, userStatus)
+      Sauce.updateOne({ _id: req.params.id }, {userStatus, _id: req.params.id})
         .then((sauce) => res.status(200).json({ message: "Sauce bien notée!" }))
         .catch((error) => res.status(400).json({ error }));
     })
