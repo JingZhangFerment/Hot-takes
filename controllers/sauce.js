@@ -50,7 +50,7 @@ exports.modifySauce = (req, res, next) => {
         const filename = sauce.imageUrl.split("/images/")[1];
         fs.unlink(`images/${filename}`, (error) => {
           if (error) {
-            return new Error(error);
+            throw new Error(error);
           }
         });
       })
@@ -143,9 +143,8 @@ exports.likeASauce = (req, res, next) => {
             !(req.body.userId in userStatus.usersLiked) &&
             req.body.like === 1
           ) {
-            
-            userStatus.usersLiked.push(req.body.userId);
-          } //ajouter dans le tableau "userLiked"
+            userStatus.usersLiked.push(req.body.userId); //ajouter dans le tableau "userLiked"
+          }
           break;
 
         case -1: //si l'utilisateur n'aime pas la sauce et qu'il n'a pas encore disliké
@@ -181,7 +180,7 @@ exports.likeASauce = (req, res, next) => {
       userStatus.dislikes = userStatus.usersDisliked.length;
 
       //mettre à jour la sauce avec les nouveaux status
-      Sauce.updateOne({ _id: req.params.id }, {userStatus, _id: req.params.id})
+      Sauce.updateOne({ _id: req.params.id }, userStatus)
         .then((sauce) => res.status(200).json({ message: "Sauce bien notée!" }))
         .catch((error) => res.status(400).json({ error }));
     })

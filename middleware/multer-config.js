@@ -15,26 +15,23 @@ const storage = multer.diskStorage({
     callback(null, "images");
   },
 
-  //indiquer à multer quel est le nom à utiliser pour ces fichiers
+  //renommer le fichier afin d'éviter le risque d'avoir deux fichiers entrants qui ont les mêmes noms 
   filename: (req, file, callback) => {
-    
+    //indiquer à multer d'utiliser le nom d'origine, de remplacer les espaces par "_" et d'ajouter un timestamp "Date.now()" comme nom de fichier
     const name = file.originalname.split(" ").join("_");
-    //si le type de fichier n'est pas dans les formats MIME_TYPES
-    //if (!(file.mimetype in MIME_TYPES)) {
-      //return callback(new Error("Le format de l'image n'est pas valide !"))
-    //} else {
-      const extension = MIME_TYPES[file.mimetype];
-      //argument 1 du callback: "null" = pas d'erreur
-      //argument 2 du callback: nom de fichier entier = name + timestamp Date.now() + extension
+    
+    const extension = MIME_TYPES[file.mimetype];
+    //argument 1 du callback: "null" = pas d'erreur
+    //argument 2 du callback: nom de fichier entier = name + timestamp Date.now() + extension
       callback(null, name + Date.now() + "." + extension);
-    //}
   },
 });
 
+//Si le format de l'image n'est pas valide
 const fileFilter = (req, file, callback) =>{
   // ne pas accepter les mimetype qui ne sont pas des images.
   if (!(file.mimetype in MIME_TYPES)) {
-    return callback(new Error("Le format de l'image n'est autorisé !"))
+   callback(new Error("Le format de l'image n'est autorisé !"))
   }
   callback(null, true)
 }
