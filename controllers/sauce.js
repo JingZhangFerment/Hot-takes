@@ -138,20 +138,16 @@ exports.likeASauce = (req, res, next) => {
 
       // 3 cas possibles selon la valeur de "like"
       switch (req.body.like) {
-        case 1: // si l'utilisateur aime la sauce et qu'il n'a pas encore liké
-          if (
-            !(req.body.userId in userStatus.usersLiked) &&
-            req.body.like === 1
-          ) {
-            userStatus.usersLiked.push(req.body.userId); //ajouter dans le tableau "userLiked"
-          }
+        case 1: // si l'utilisateur aime la sauce
+          //et qu'il n'a pas encore liké
+          if (!(req.body.userId in userStatus.usersLiked)) {
+            userStatus.usersLiked.push(req.body.userId);
+          } 
           break;
 
-        case -1: //si l'utilisateur n'aime pas la sauce et qu'il n'a pas encore disliké
-          if (
-            !(req.body.userId in userStatus.usersDisliked) &&
-            req.body.like === -1
-          ) {
+        case -1: //si l'utilisateur n'aime pas la sauce
+          //et qu'il n'a pas encore disliké
+          if (!(req.body.userId in userStatus.usersDisliked)) {
             userStatus.usersDisliked.push(req.body.userId);
           } //ajouter dans le tableau "userDisliked"
           break;
@@ -162,7 +158,9 @@ exports.likeASauce = (req, res, next) => {
             //indexer l'userID
             let indexLiked = userStatus.usersLiked.indexOf(req.body.userId);
             userStatus.usersLiked.splice(indexLiked, 1); //supprimer 1 élément à partir de l'index "index"
-          } else if (userStatus.usersDisliked.includes(req.body.userId)) {
+          }
+          // si l'utilise annule son dislike, retirer-le du tableau "disLiked"
+          else if (userStatus.usersDisliked.includes(req.body.userId)) {
             //si l'utilisateur annule son dislike, retirer-le du tableau "userDisliked"
             let indexDisliked = userStatus.usersDisliked.indexOf(
               req.body.userId

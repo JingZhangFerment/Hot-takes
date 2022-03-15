@@ -1,3 +1,5 @@
+//Ce fichier contient la configuration pour protéger les routes en vérifiant l'authentification avant envoi requêtes 
+
 //pour charger les variables d'environnement stockées dans le fichier .env et protéger les informations de connexion
 const dotenv = require("dotenv");
 dotenv.config();
@@ -8,10 +10,12 @@ const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
   try {
-    // Récupérer le token dans le header authorization de "En-tête de requête"
+    // recuperer le token dans le header authorization
+    // avec split : retourne un tableau avec 'Bearer' en 1e element et le token en 2e element
+    // on recupere seulement le 2è element de ce tableau : le token
     const token = req.headers.authorization.split(" ")[1];
     
-    // Décoder le token 
+    // décoder le token avec fonction verify de jwt, le token payload et sa clé secrète en argument 
     const decodedToken = jwt.verify(token, process.env.SECRET_TOKEN);
     
     // Récupérer du userId encodé dans le token

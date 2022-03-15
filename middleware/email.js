@@ -1,3 +1,5 @@
+//Ce fichier contient la configuration pour valider une adresse email
+
 //importer le package validator
 const emailValidator = require("validator");
 

@@ -1,3 +1,5 @@
+//Ce fichier contient la configuration pour gérer les fichiers entrants dans les requêtes HTTP
+
 //importer le package "multer" qui permet de gérer les fichiers entrants dans les requêtes HTTP
 const multer = require("multer");
 

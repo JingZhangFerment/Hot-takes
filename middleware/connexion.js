@@ -1,7 +1,8 @@
+//Ce fichier contient la configuration pour limiter les tentatives de connexion échoués
+
 //import le package "express-rate-limit"
 const limit = require ("express-rate-limit");
 
-//configuration du middleware pour limiter les tentatives de connexion échoués
 const connexionLimit = limit({
     windowMs: 15 * 60 * 1000, // 15 minutes: en ms
 	max: 5, // limiter chaque ID à 5 tentatives

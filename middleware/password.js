@@ -1,3 +1,5 @@
+//Ce fichier contient la configuration pour sécuriser les mots de passe
+
 //importer le schéma des mots de passe
 const passwordSchema = require("../models/password");
 
