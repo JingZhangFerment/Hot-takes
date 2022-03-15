@@ -158,11 +158,11 @@ exports.likeASauce = (req, res, next) => {
 
         case 0: // l'utilisateur annule son like ou dislike ou position neutre
           // si l'utilisateur annule son like, retirer-le du tableau "userLiked"
-
-          if (req.body.userId in userStatus.usersLiked) {
+          if (userStatus.usersLiked.includes(req.body.userId)) {
+            //indexer l'userID
             let indexLiked = userStatus.usersLiked.indexOf(req.body.userId);
             userStatus.usersLiked.splice(indexLiked, 1); //supprimer 1 élément à partir de l'index "index"
-          } else {
+          } else if (userStatus.usersDisliked.includes(req.body.userId)) {
             //si l'utilisateur annule son dislike, retirer-le du tableau "userDisliked"
             let indexDisliked = userStatus.usersDisliked.indexOf(
               req.body.userId
