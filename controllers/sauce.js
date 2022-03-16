@@ -136,24 +136,41 @@ exports.likeASauce = (req, res, next) => {
         dislikes: 0,
       };
 
-      // 3 cas possibles selon la valeur de "like"
+      // gestion des cas selon la valeur de "like"
       switch (req.body.like) {
-        case 1: // si l'utilisateur aime la sauce
-          //et qu'il n'a pas encore liké
-          if (!(req.body.userId in userStatus.usersLiked)) {
-            userStatus.usersLiked.push(req.body.userId);
-          } 
+        // si req.body.like = 1, l'utilisateur aime la sauce
+        case 1:
+          //...et qu'il n'a pas encore liké
+          if (!userStatus.usersLiked.includes(req.body.userId)) {
+            userStatus.usersLiked.push(req.body.userId); //ajouter dans le tableau "userLiked"
+          } else {
+            // ...et qu'il a déjà liké
+            throw new Error("Un seul like possible !");
+          }
+          //... et qu'il a déjà disliké
+          if (userStatus.usersDisliked.includes(req.body.userId)) {
+            throw new Error("Merci d'annuler votre dislike avant de liker !");
+          }
           break;
 
-        case -1: //si l'utilisateur n'aime pas la sauce
-          //et qu'il n'a pas encore disliké
-          if (!(req.body.userId in userStatus.usersDisliked)) {
-            userStatus.usersDisliked.push(req.body.userId);
-          } //ajouter dans le tableau "userDisliked"
+        //si req.body.like = -1, l'utilisateur n'aime pas la sauce
+        case -1: 
+          //...et qu'il n'a pas encore disliké
+          if (!userStatus.usersDisliked.includes(req.body.userId)) {
+            userStatus.usersDisliked.push(req.body.userId); //ajouter dans le tableau "userDisliked"
+          } else {
+          //...et qu'il a déjà disliké
+            throw new Error("Un seul dislike possible !");
+          }
+          //...et qu'il a déjà liké
+          if (userStatus.usersLiked.includes(req.body.userId)) {
+            throw new Error("Merci d'annuler votre like avant de disliker !");
+          }
           break;
-
-        case 0: // l'utilisateur annule son like ou dislike ou position neutre
-          // si l'utilisateur annule son like, retirer-le du tableau "userLiked"
+        
+        // si req.body.like = 0, l'utilisateur annule son like ou neutre
+        case 0: 
+          // si l'utilisateur annule son like
           if (userStatus.usersLiked.includes(req.body.userId)) {
             //indexer l'userID
             let indexLiked = userStatus.usersLiked.indexOf(req.body.userId);
@@ -180,7 +197,7 @@ exports.likeASauce = (req, res, next) => {
       //mettre à jour la sauce avec les nouveaux status
       Sauce.updateOne({ _id: req.params.id }, userStatus)
         .then((sauce) => res.status(200).json({ message: "Sauce bien notée!" }))
-        .catch((error) => res.status(400).json({ error }));
+        .catch((error) => res.status(400).json({ error: error.message }));
     })
-    .catch((error) => res.status(400).json({ error }));
+    .catch((error) => res.status(400).json({ error: error.message }));
 };

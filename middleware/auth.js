@@ -10,7 +10,7 @@ const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
   try {
-    // recuperer le token dans le header authorization
+    // récuperer le token dans le header authorization
     // avec split : retourne un tableau avec 'Bearer' en 1e element et le token en 2e element
     // on recupere seulement le 2è element de ce tableau : le token
     const token = req.headers.authorization.split(" ")[1];
