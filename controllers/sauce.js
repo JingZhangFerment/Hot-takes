@@ -6,7 +6,7 @@
 const jwt = require("jsonwebtoken");
 // importer le modèle des données sauces
 const Sauce = require("../models/sauce");
-//importer le package "file system" qui permet de modifer le system des fichiers.
+// importer le package "file system" qui permet de modifer le system des fichiers.
 const fs = require("fs");
 
 // -----MIDDLEWARE pour créer une sauce ------------
@@ -24,7 +24,7 @@ exports.createSauce = (req, res, next) => {
     userDisliked: [" "],
   });
  
-  // empêcher utilisateur de creer une sauce avec l'userId de quelqu'un d'autre
+  // empêcher utilisateur de créer une sauce avec l'userId de quelqu'un d'autre
   if (sauce.userId === req.auth.userId) {
     sauce
       .save()
@@ -51,7 +51,6 @@ exports.modifySauce = (req, res, next) => {
       .catch((error) => res.status(400).json({ error: error.message }));
   }
 
-  //cette sauce est retournée dans une promise et envoyée au front-end
   Sauce.findOne({ _id: req.params.id }).then((sauce) => {
     // on récupère les informations modifiées de la sauce dans la constante sauceObject
     // on utilise operateur ternaire "?" pour savoir si un fichier image a été ajouté à la requête
@@ -72,7 +71,7 @@ exports.modifySauce = (req, res, next) => {
       return res.status(404).json({ error: "Sauce non trouvée !" });
     }
 
-    //Vérifier si l'userId actuel correspond à l'userId de la sauce
+    // vérifier si l'userId actuel correspond à l'userId de la sauce
     if (sauceObject.userId && sauceObject.userId !== sauce.userId) {
       // mettre à jour la sauce dans la base de donnée, on compare
       Sauce.updateOne(
@@ -100,7 +99,7 @@ exports.deleteSauce = (req, res, next) => {
         return res.status(404).json({ error: "Sauce non trouvée !" });
       }
 
-      //vérifier si l'userId de la sauce est le même que l'userId authentifié
+      // vérifier si l'userId de la sauce est le même que l'userId authentifié
       if (sauce.userId && sauce.userId !== req.auth.userId) {
         return res.status(403).json({ error: "Requête non autorisée !" });
       }

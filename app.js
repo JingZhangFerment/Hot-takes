@@ -1,6 +1,6 @@
 //Ce fichier contient la logique globale de notre application.
 
-//pour charger les variables d'environnement stockées dans le fichier .env et protéger les informations de connexion
+//import "dotenv": charger les variables d'environnement stockées dans le fichier .env et protéger les informations de connexion
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -9,19 +9,19 @@ const express = require("express"); //pour créer les applis web avec node
 //faciliter les interations entre l'application Express et la base de données MongoDB.
 const mongoose = require("mongoose"); 
 
-//pour sécuriser les en-tête http de l'application express
+//sécuriser les en-tête http de l'application express
 const helmet = require("helmet");
 
 //nettoyer les données fournies par l'utilisateur pour empêcher l'injection d'opérateur MongoDB.
 const mongoSanitize = require("express-mongo-sanitize");
 
-//pour donner accès au chemin de fichiers
+//donner accès au chemin de fichiers
 const path = require("path");
 
-//pour le parcours des sauces
+//parcours des sauces
 const sauceRoutes = require("./routes/sauce");
 
-//pour le parcours des utilisateurs
+//parcours des utilisateurs
 const userRoutes = require("./routes/user");
 
 //--------CONNEXTION l'API A LA BASE DES DONNEES MONGODB -------------
@@ -33,15 +33,14 @@ mongoose
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
-//Faire appel au module "Express" avec sa fonction
+//faire appel au module "Express" avec sa fonction
 const app = express();
 
-//Gérer les requêtes 'POST' venant du frontend : besoin d'extraire le corps JSON des requêtes
+//gérer les requêtes 'POST' venant du frontend : besoin d'extraire le corps JSON des requêtes
 //Express prend les requêtes qui ont comme Content-Type application/json et met à disposition leur body directement sur l'objet req
 app.use(express.json()); 
 
-//Pour permettre aux deux ports (front et end) de communiquer entre eux
-//Il ne prend pas l'adresse en premier argument, car cela s'applique à toutes les routes
+//permettre aux deux ports (front et end) de communiquer entre eux
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*"); //permet d'accéder l'API depuis n'importe quelle origine ('*')
   res.setHeader(
@@ -67,12 +66,12 @@ app.use(mongoSanitize());
 
 //----------------------CONFIGURATION DES ROUTES API----------------------------
 
-//Gérer la ressource "images" de manière statique à chaque fois qu'elle reçoit une requête vers la route /images.
+//gérer la ressource "images" de manière statique à chaque fois qu'elle reçoit une requête vers la route /images.
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 //enregistrement des routes
 app.use("/api/sauces", sauceRoutes);
 app.use("/api/auth", userRoutes);
 
-//Export ce module "app" pour y accéder depuis les autres fichiers
+//export ce module "app" pour y accéder depuis les autres fichiers
 module.exports = app;

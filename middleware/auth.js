@@ -1,10 +1,10 @@
 //Ce fichier contient la configuration pour protéger les routes en vérifiant l'authentification avant envoi requêtes
 
-//pour charger les variables d'environnement stockées dans le fichier .env et protéger les informations de connexion
+//charger les variables d'environnement stockées dans le fichier .env et protéger les informations de connexion
 const dotenv = require("dotenv");
 dotenv.config();
 
-//pour créer et vérifier les tokens d'authentification
+//créer et vérifier les tokens d'authentification
 const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {

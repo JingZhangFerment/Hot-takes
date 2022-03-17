@@ -6,7 +6,7 @@ const http = require("http");
 //import de l'app express
 const app = require("./app");
 
-//import "dotenv": charger les variables d'environnement stockées dans le fichier .env
+//import "dotenv": charger les variables d'environnement stockées dans le fichier .env et protéger les informations de connexion
 const dotenv = require("dotenv");
 dotenv.config();
 
