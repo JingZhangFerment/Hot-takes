@@ -23,9 +23,9 @@ exports.createSauce = (req, res, next) => {
     userLiked: [" "],
     userDisliked: [" "],
   });
-
+ 
   // empêcher utilisateur de creer une sauce avec l'userId de quelqu'un d'autre
-  if (sauce.userId === req.auth) {
+  if (sauce.userId === req.auth.userId) {
     sauce
       .save()
       .then((sauce) => res.status(201).json({ message: "Sauce enregistrée!" }))
