@@ -27,7 +27,7 @@ exports.createSauce = (req, res, next) => {
     userLiked: [" "],
     userDisliked: [" "],
   });
- 
+
   // si le userId de la sauce est le même que celui du token de connexion
   if (sauce.userId === req.auth.userId) {
     sauce
@@ -55,42 +55,40 @@ exports.modifySauce = (req, res, next) => {
       .catch((error) => res.status(400).json({ error: error.message }));
   }
 
+  // chercher la sauce qui a l'id correspondent à celui dans les parametres de la requete
   Sauce.findOne({ _id: req.params.id }).then((sauce) => {
     // on récupère les informations modifiées de la sauce dans la constante sauceObject
     // on utilise operateur ternaire "?" pour savoir si un fichier image a été ajouté à la requête
     const sauceObject = req.file
-      ? {
-          // on récupère les chaines de caractères qui sont dans la requête et on parse en objet
+      ? {// Si le fichier image existe, on traite les strings et la nouvelle image
           ...JSON.parse(req.body.sauce),
           // on modifie l'url de l'image
           imageUrl: `${req.protocol}://${req.get("host")}/images/${
             req.file.filename
           }`,
-        }
-      : //si le fichier image n'existe pas, on traite les autres élements du corps de la requête
-        { ...req.body };
+        }// si pas de fichier image, on traite les autres élements du corps de la requête
+      : { ...req.body };
 
-    // vérifier si on trouve la sauce à modifier
+      // vérifier si on trouve la sauce à modifier
     if (!sauce) {
       return res.status(404).json({ error: "Sauce non trouvée !" });
     }
 
-    // vérifier si l'userId actuel correspond à l'userId de la sauce
+    // Si l'userId de la sauce modifiée est le même que l'userId de la sauce avant modification
     if (sauceObject.userId && sauceObject.userId !== sauce.userId) {
-      // mettre à jour la sauce dans la base de donnée, on compare
-      Sauce.updateOne(
-        // 1er argument : la sauce choisie, celle avec l'id envoyée dans la requête
-        // 2ème argument : nouvelle version de la sauce, celle modifiée renvoyée dans la requête
-        { _id: req.params.id },
-        { ...sauceObject, _id: req.params.id }
-      )
-        .then((sauce) =>
-          res.status(200).json({ message: "Sauce bien modifiée !" })
-        )
-        .catch((error) => res.status(400).json(error));
-    } else {
       res.status(401).json({ error: "Modification non autorisée !" });
     }
+
+    Sauce.updateOne(
+      // 1er argument : la sauce choisie, celle avec l'id envoyée dans la requête
+      // 2ème argument : nouvelle version de la sauce, celle modifiée renvoyée dans la requête
+      { _id: req.params.id },
+      { ...sauceObject, _id: req.params.id }
+    )
+      .then((sauce) =>
+        res.status(200).json({ message: "Sauce bien modifiée !" })
+      )
+      .catch((error) => res.status(400).json(error));
   });
 };
 
