@@ -11,10 +11,14 @@ const fs = require("fs");
 
 // -----MIDDLEWARE pour créer une sauce ------------
 exports.createSauce = (req, res, next) => {
+  // transformation des informations de la requête (chaine JSON) en objet JS
   const sauceObject = JSON.parse(req.body.sauce);
+  // suppresion du champ id de la requete qui n'est pas le bon car l'id est généré automatiquement par mongoose
   delete sauceObject._id;
+  // nouvelle instance de l'objet Sauce en lui passant un objet JS
   const sauce = new Sauce({
-    ...sauceObject,
+    ...sauceObject, // on utlise l'opérateur spread ... pour faire une copie de tous les élements req.body
+    // configuration de l'url de l'image
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
@@ -24,10 +28,10 @@ exports.createSauce = (req, res, next) => {
     userDisliked: [" "],
   });
  
-  // empêcher utilisateur de créer une sauce avec l'userId de quelqu'un d'autre
+  // si le userId de la sauce est le même que celui du token de connexion
   if (sauce.userId === req.auth.userId) {
     sauce
-      .save()
+      .save() // Enregistrement de la sauce dans la base de données
       .then((sauce) => res.status(201).json({ message: "Sauce enregistrée!" }))
       .catch((error) => res.status(400).json({ error }));
   } else {
@@ -92,6 +96,7 @@ exports.modifySauce = (req, res, next) => {
 
 // -----MIDDLEWARE pour supprimer une sauce ------------
 exports.deleteSauce = (req, res, next) => {
+  // on cherche la sauce qui a l'id correspondent à celui dans les parametres de la requete
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
       // vérifier si on trouve la sauce à supprimée
@@ -106,7 +111,11 @@ exports.deleteSauce = (req, res, next) => {
 
       const filename = sauce.imageUrl.split("/images/")[1];
 
+      // la methode fs.unlink va supprimer l'image du chemin local et dans la base de donnée
+      // 1er arg: chemin du fichier, 2e arg: la callback=ce qu'il faut faire une fois le fichier supprimé
       fs.unlink(`images/${filename}`, () => {
+        // on supprime la sauce de la base de donnée en indiquant son id
+        // pas besoin de 2e arg car suppression
         Sauce.deleteOne({ _id: req.params.id })
           .then((Sauce) =>
             res.status(200).json({ message: "Sauce supprimée !" })
