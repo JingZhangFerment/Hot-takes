@@ -145,7 +145,7 @@ exports.likeASauce = (req, res, next) => {
   //trouver la sauce dans la base des données
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
-      //définir le status d'un utilisateur
+      //récupérer les valeurs de likes et dislikes
       const userStatus = {
         usersLiked: sauce.usersLiked,
         usersDisliked: sauce.usersDisliked,
