@@ -49,7 +49,7 @@ app.use((req, res, next) => {
   ); //ajouter les headers mentionnés aux requêtes envoyées vers notre API
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH, OPINIONS "
+    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
   ); //Permet d'envoyer des requêtes avec les méthodes mentionnées
   next();
 });
